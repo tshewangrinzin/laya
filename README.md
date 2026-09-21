@@ -377,6 +377,8 @@ temperatures at all, so fit them before relying on its probabilities.
 
 * **Hugging Face Model:** [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya)
 * **Interactive Web Demo:** [convaiinnovations/laya-demo](https://huggingface.co/spaces/convaiinnovations/laya-demo)
+* **Colab — serve as an OpenAI API:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/tshewangrinzin/laya/blob/main/notebooks/laya_colab_openai_api.ipynb)
+* **Colab — post-train with RLCD:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/tshewangrinzin/laya/blob/main/notebooks/laya_colab_post_training_rl.ipynb)
 * **Engineering Writeup:** [Read the full story on Dev.to](https://dev.to/nandakishor_m_6cc0adfde9f/i-built-non-autoregressive-decision-models-a-year-ago-then-a-frontier-lab-called-it-a-18me)
 
 ---
@@ -388,6 +390,13 @@ the whole loop: build the dataset, train with RLCD (proper-scoring-rule rewards,
 policy gradient), fit calibration temperatures, evaluate, and push the result to the Hub.
 
 * **[`notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb`](notebooks/laya_finetune_typed_decisions_2xT4_kaggle.ipynb)**
+* **[`notebooks/laya_colab_post_training_rl.ipynb`](notebooks/laya_colab_post_training_rl.ipynb)** —
+  the one-runtime Colab edition: builds the training set from raw sources with
+  [`datasets/curate.py`](datasets/curate.py) (10-stage pipeline, leakage-safe splits, full QC
+  asserts — see [`datasets/README.md`](datasets/README.md)), tokenises to tensors, runs SFT + RLCD
+  with GRPO-style group baselines on a single T4, fits temperatures on the held-out calibration
+  split, evaluates base-vs-fine-tuned (accuracy / teacher agreement / Brier / ECE, per workflow),
+  and publishes the checkpoint to the Hub or a downloadable zip.
 
 Fine-tuning is where most of the value is. On the typed-decisions benchmark the base
 checkpoints score near chance zero-shot (0.36 and 0.35 against a 0.318 random baseline),
@@ -396,6 +405,29 @@ TypeSafe Jev's published 0.727 and above the 0.735 teacher self-agreement ceilin
 as a fast base to specialise, not as a zero-shot decision engine.
 
 Runtime on 2xT4 is roughly 4-5 hours for 4 epochs over ~30k questions.
+
+---
+
+## Serve it as an OpenAI-compatible API — Colab + Cloudflare tunnel
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/tshewangrinzin/laya/blob/main/notebooks/laya_colab_openai_api.ipynb)
+
+**[`notebooks/laya_colab_openai_api.ipynb`](notebooks/laya_colab_openai_api.ipynb)** clones this repo
+into a free Colab GPU, loads the English checkpoint behind a small FastAPI server, and exposes it at
+a public `https://<random>.trycloudflare.com` URL through a Cloudflare **quick tunnel** — no account,
+no port forwarding. Paste the URL and a bearer key into the OpenAI SDK, LangChain, Open WebUI, or
+plain `curl`:
+
+* OpenAI-compatible: `GET /v1/models`, `POST /v1/chat/completions` (JSON Laya contract *or* plain
+  text in the user message; `logprobs` returns the model's real per-option probabilities),
+  `/v1/completions`, `/v1/responses`
+* Native: `/v1/decide`, `/v1/classify` (confidence gating + reject label), `/v1/score`,
+  `/v1/detect` (thresholded noul), `/v1/presets`
+* Ops: lazy or pinned model loading, optional API key, keepalive + log + restart cells; a
+  fine-tuned checkpoint from the post-training notebook is auto-served as `laya-ft`
+
+One forward pass answers everything in the request — there is nothing to stream and nothing to
+hallucinate; quick-tunnel caveats (rotating URL, no incremental SSE) are documented in the notebook.
 
 ---
 

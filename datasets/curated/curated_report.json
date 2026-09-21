@@ -1,0 +1,204 @@
+{
+  "pipeline": "laya-dataset-curation-v1",
+  "sources": [
+    "demo"
+  ],
+  "stats": {
+    "curated": 92,
+    "drop:dup-exact": 25,
+    "drop:dup-near": 9,
+    "drop:garbage": 1,
+    "drop:imbalance": 1,
+    "drop:length": 2,
+    "drop:not-english": 1,
+    "fetched:demo": 130
+  },
+  "counts": {
+    "train": 68,
+    "val": 4,
+    "calib": 5,
+    "test": 14
+  },
+  "primitive_counts": {
+    "choice": 39,
+    "noul": 22,
+    "score": 37
+  },
+  "label_distribution": {
+    "train": {
+      "department": {
+        "billing": 3,
+        "technical": 3,
+        "sales": 2,
+        "other": 2
+      },
+      "is_urgent": {
+        "true": 4,
+        "false": 3
+      },
+      "sentiment": {
+        "1": 6,
+        "0": 5,
+        "2": 5,
+        "3": 4,
+        "4": 4
+      },
+      "is_spam": {
+        "true": 10,
+        "false": 1
+      },
+      "intent": {
+        "other": 10,
+        "intent_01": 2,
+        "intent_04": 2,
+        "intent_03": 2,
+        "intent_05": 2,
+        "intent_07": 1,
+        "intent_11": 1,
+        "intent_15": 1,
+        "intent_00": 1,
+        "intent_16": 1
+      }
+    },
+    "val": {
+      "intent": {
+        "intent_02": 1
+      },
+      "sentiment": {
+        "1": 1,
+        "2": 1
+      },
+      "is_spam": {
+        "true": 1
+      }
+    },
+    "calib": {
+      "sentiment": {
+        "0": 5
+      }
+    },
+    "test": {
+      "intent": {
+        "other": 2,
+        "intent_00": 1,
+        "intent_14": 1,
+        "intent_02": 1
+      },
+      "sentiment": {
+        "1": 3,
+        "0": 2,
+        "3": 1
+      },
+      "is_spam": {
+        "true": 3
+      }
+    }
+  },
+  "options": {
+    "max_options": 12,
+    "min_quality": 0.1,
+    "label_smooth": 0.05,
+    "dedup": true,
+    "dedup_threshold": 0.85,
+    "balance": true,
+    "min_margin": 0.25,
+    "min_label_freq": 4,
+    "per_source_limit": 300,
+    "min_chars": 24,
+    "max_chars": 6000,
+    "seed": 42,
+    "split": [
+      760,
+      80,
+      160
+    ],
+    "demo": true
+  },
+  "licenses": {},
+  "sources_registry": {
+    "typed_decisions": {
+      "kind": "hf",
+      "repo": "LocalLLaMA/typed-decisions",
+      "config": "all",
+      "train": "train",
+      "test": "test",
+      "license": "see dataset card",
+      "note": "official RLCD benchmark: 4 workflows, teacher-consensus soft labels"
+    },
+    "typed_decisions_synth": {
+      "kind": "hf",
+      "repo": "n4ze3m/typed-decisions-synth",
+      "config": "default",
+      "train": "train",
+      "test": "validation",
+      "license": "mit",
+      "note": "synthetic typed decisions, 52 domains + 100 workflows, teacher soft labels"
+    },
+    "ag_news": {
+      "kind": "hf",
+      "repo": "fancyzhx/ag_news",
+      "config": "default",
+      "train": "train",
+      "test": "test",
+      "license": "see dataset card",
+      "note": "news topic classification (4 classes)"
+    },
+    "emotion": {
+      "kind": "hf",
+      "repo": "dair-ai/emotion",
+      "config": "default",
+      "train": "train",
+      "test": "test",
+      "license": "see dataset card (SemEval-2018 Task 1)",
+      "note": "6-way emotion classification"
+    },
+    "clinc_oos": {
+      "kind": "hf",
+      "repo": "clinc/clinc_oos",
+      "config": "small",
+      "train": "train",
+      "test": "test",
+      "license": "see dataset card",
+      "note": "CLINC150 assistant intents + out-of-scope; catalog folded to top-K + 'other'"
+    },
+    "sms_spam": {
+      "kind": "hf",
+      "repo": "ucirvine/sms_spam",
+      "config": "plain_text",
+      "train": "train",
+      "test": null,
+      "license": "unknown (academic collection)",
+      "note": "SMS spam/ham -> calibrated noul"
+    },
+    "prompt_injections": {
+      "kind": "hf",
+      "repo": "deepset/prompt-injections",
+      "config": "default",
+      "train": "train",
+      "test": "test",
+      "license": "apache-2.0",
+      "note": "prompt-injection yes/no -> noul (guardrails)"
+    },
+    "sst5": {
+      "kind": "hf",
+      "repo": "SetFit/sst5",
+      "config": "default",
+      "train": "train",
+      "test": "validation",
+      "license": "see dataset card (derived from SST)",
+      "note": "5-way sentiment -> ordinal `score` question"
+    },
+    "support_tickets": {
+      "kind": "kaggle",
+      "slug": "waseemalastal/customer-support-ticket-dataset",
+      "license": "see Kaggle page",
+      "note": "~8k support tickets -> triage-style question pack (weak labels from metadata)"
+    },
+    "customer_intent": {
+      "kind": "kaggle",
+      "slug": "scodepy/customer-support-intent-dataset",
+      "license": "see Kaggle page",
+      "note": "Bitext customer-service intents CSV -> catalog choice"
+    }
+  }
+}
